@@ -1,0 +1,7 @@
+{
+  "name": "usage-band",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Shows context usage, 5-hour and weekly limits, resets, and session cost above the prompt",
+  "types": "./types/index.d.ts"
+}

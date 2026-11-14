@@ -1,0 +1,7 @@
+{
+  "name": "usage-band-plus",
+  "version": "0.2.0",
+  "license": "MIT",
+  "description": "Shows context usage, 5-hour and weekly limits, resets, a prompt-cache countdown, and the current model and effort above the prompt",
+  "types": "./types/index.d.ts"
+}

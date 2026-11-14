@@ -1,0 +1,24 @@
+{
+  "name": "claude-mods",
+  "owner": {
+    "name": "kkchori511",
+    "url": "https://github.com/kkchori511"
+  },
+  "metadata": {
+    "description": "Claude Code mods: small changes to Claude Code's own interface"
+  },
+  "plugins": [
+    {
+      "name": "usage-band-plus",
+      "source": "./mods/usage-band-plus",
+      "description": "Shows context usage, 5-hour and weekly limits, a prompt-cache countdown, and the current model and effort above the prompt",
+      "license": "MIT"
+    },
+    {
+      "name": "usage-band",
+      "source": "./mods/usage-band",
+      "description": "Shows context usage, 5-hour and weekly limits, resets, and session cost above the prompt (earlier version)",
+      "license": "MIT"
+    }
+  ]
+}
