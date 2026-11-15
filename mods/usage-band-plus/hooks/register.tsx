@@ -84,6 +84,13 @@ const battery = (fraction: number): { top: number; bottom: number } => {
 const batteryColor = (fraction: number): string =>
   fraction > 0.5 ? GREEN : fraction > 0.2 ? YELLOW : RED
 
+// 배터리 색 물결의 띠 가운데 색: 배터리 색을 밝게 한 색.
+const HIGHLIGHTS: Record<string, string> = {
+  [GREEN]: '#F0FFE6',
+  [YELLOW]: '#FFF8E0',
+  [RED]: '#FFDDD8',
+}
+
 // 남은 시간: 항상 7칸(05m 09s). 만료면 Expired.
 const countdown = (ms: number): string => {
   if (ms <= 0) return 'Expired'
@@ -310,8 +317,6 @@ export const register: Register = on => {
                   {edge}
                 </Text>
               ))}
-              {batteryRow(cell.top)}
-              {edge}
             </Text>
             <Text>
               {items.map(item => {
@@ -333,8 +338,6 @@ export const register: Register = on => {
                   </Text>
                 )
               })}
-              {batteryRow(cell.bottom)}
-              {edge}
             </Text>
             <Text>
               {items.map(item => (
@@ -343,10 +346,26 @@ export const register: Register = on => {
                   {edge}
                 </Text>
               ))}
-              <Text bold dimColor={lastAt !== null && left <= 0}>{centered(timeText, CACHE_INNER)}</Text>
-              {edge}
             </Text>
           </Box>
+          <Box flexDirection="column" width={CACHE_INNER}>
+            {Client === null ? (
+              <Box flexDirection="column">
+                {batteryRow(cell.top)}
+                {batteryRow(cell.bottom)}
+              </Box>
+            ) : (
+              <Client
+                key={`battery-${gen}`}
+                module="./battery.tsx"
+                props={{ top: cell.top, bottom: cell.bottom, base: fill, highlight: HIGHLIGHTS[fill] ?? fill }}
+                width={CACHE_INNER}
+                height={2}
+              />
+            )}
+            <Text bold dimColor={lastAt !== null && left <= 0}>{centered(timeText, CACHE_INNER)}</Text>
+          </Box>
+          <Text dimColor>{'│\n│\n│'}</Text>
         </Box>
         <Text dimColor>{rule('└', '┴', '┘', count)}</Text>
         <Text>
