@@ -103,3 +103,14 @@ test('로고 칸 이름은 세대 번호를 따라 바뀐다 (내려간 로고�
   expect(logo?.key).toBe('logo-7')
   await ui.unmount()
 })
+
+test('로고는 칸마다 색을 따로 칠한다 (색 물결)', async ($, on) => {
+  setup(on, 0)
+  const ui = await $.ui.mount({ ...BAND, surface: 'terminal' })
+  const tree = JSON.stringify(await ui.drawn({ in: 'logo-7' }))
+  const colors = tree.match(/#[0-9a-f]{6}/g) ?? []
+
+  expect(colors.length).toBe(29)
+  expect(colors.includes('#d97757')).toBe(true)
+  await ui.unmount()
+})
