@@ -16,6 +16,7 @@ declare module 'claude-code' {
       cacheAt: number | null
       cacheTtl: '5m' | '1h'
       tick: number
+      logoGen: number
     }
   }
 }

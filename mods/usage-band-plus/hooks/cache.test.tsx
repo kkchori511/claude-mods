@@ -27,6 +27,7 @@ const seed = (cacheAgoMs: number | null) => ({
   },
   cacheAt: cacheAgoMs === null ? null : NOW - cacheAgoMs,
   cacheTtl: '1h',
+  logoGen: 7,
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,5 +93,13 @@ test('Context, 5-hour, Weekly 칸은 폭 12로 같고 Resets 글자가 없다', 
   expect(title.split('│').slice(2, 5)).toEqual(['  Context   ', '   5-hour   ', '   Weekly   '])
   expect(subs.split('│').slice(0, 3)).toEqual(['  59k / 1M  ', '   3h 54m   ', '   2d 16h   '])
   expect(subs.includes('Resets')).toBe(false)
+  await ui.unmount()
+})
+
+test('로고 칸 이름은 세대 번호를 따라 바뀐다 (내려간 로고가 다시 만들어지도록)', async ($, on) => {
+  setup(on, 0)
+  const ui = await $.ui.mount({ ...BAND, surface: 'terminal' })
+  const logo = await ui.find({ type: 'Client' })
+  expect(logo?.key).toBe('logo-7')
   await ui.unmount()
 })

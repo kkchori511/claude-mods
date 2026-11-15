@@ -11,6 +11,9 @@ const effort = atom({ plugin: 'usage-band-plus', key: 'effort' } as const, null)
 const cacheAt = atom({ plugin: 'usage-band-plus', key: 'cacheAt' } as const, null)
 const cacheTtl = atom({ plugin: 'usage-band-plus', key: 'cacheTtl' } as const, '1h')
 const tick = atom({ plugin: 'usage-band-plus', key: 'tick' } as const, 0)
+// 로고 칸 세대 번호: 응답이 끝날 때마다 올려 로고 칸을 새로 만든다.
+// 엔진이 로고 칸을 내린 뒤(오류·시간 초과)에도 다음 응답 뒤에 다시 나타나게 하려는 것.
+const logoGen = atom({ plugin: 'usage-band-plus', key: 'logoGen' } as const, 0)
 
 const ORANGE = '#D97757'
 
@@ -170,6 +173,10 @@ export const register: Register = on => {
       await update($, period, () => periodFor(tokens))
     }
 
+    if (e.agentId === undefined) {
+      await update($, logoGen, n => (n + 1) % 1_000_000)
+    }
+
     return next(e)
   })
 
@@ -222,6 +229,7 @@ export const register: Register = on => {
     const currentModel = await read($, model)
     const currentEffort = await read($, effort)
     const speed = await read($, period)
+    const gen = await read($, logoGen)
     await read($, tick)
     const lastAt = await read($, cacheAt)
     const ttl = TTL_MS[await read($, cacheTtl)] ?? 60 * 60_000
@@ -289,7 +297,7 @@ export const register: Register = on => {
           {Client === null ? (
             <Box width={TITLE_INNER} height={3} />
           ) : (
-            <Client key="logo-v2" module="./logo.tsx" props={{ period: speed }} width={TITLE_INNER} height={3} />
+            <Client key={`logo-${gen}`} module="./logo.tsx" props={{ period: speed }} width={TITLE_INNER} height={3} />
           )}
           <Text dimColor>{'│\n│\n│'}</Text>
           <Box flexDirection="column">
