@@ -20,7 +20,10 @@ const seed = (cacheAgoMs: number | null) => ({
     contextPercent: 6,
     contextTokens: 59_000,
     contextWindow: 1_000_000,
-    limits: [{ kind: 'five_hour', percentUsed: 20, resetsAt: null }],
+    limits: [
+      { kind: 'five_hour', percentUsed: 20, resetsAt: new Date(NOW + (3 * 60 + 54) * 60_000).toISOString() },
+      { kind: 'seven_day', percentUsed: 51, resetsAt: new Date(NOW + (2 * 24 + 16) * 3_600_000).toISOString() },
+    ],
   },
   cacheAt: cacheAgoMs === null ? null : NOW - cacheAgoMs,
   cacheTtl: '1h',
@@ -74,5 +77,20 @@ test('Cache 칸: 1시간이 지나면 Expired, 응답 전에는 –', async ($, 
   const ui = await $.ui.mount({ ...BAND, surface: 'terminal' })
   const time = (await ui.find({ type: 'Text', text: /Expired/ }))?.text ?? ''
   expect(lastCell(time)).toBe('  Expired  ')
+  await ui.unmount()
+})
+
+test('Context, 5-hour, Weekly 칸은 폭 12로 같고 Resets 글자가 없다', async ($, on) => {
+  setup(on, (7 * 60 + 50) * 1000)
+  const ui = await $.ui.mount({ ...BAND, surface: 'terminal' })
+  const lines = (await ui.findAll({ type: 'Text' }))
+    .map(f => f.text ?? '')
+    .filter(t => t.split('│').length > 4)
+  const title = lines.find(t => t.includes('Context')) ?? ''
+  const subs = lines.find(t => t.includes('52m 10s')) ?? ''
+
+  expect(title.split('│').slice(2, 5)).toEqual(['  Context   ', '   5-hour   ', '   Weekly   '])
+  expect(subs.split('│').slice(0, 3)).toEqual(['  59k / 1M  ', '   3h 54m   ', '   2d 16h   '])
+  expect(subs.includes('Resets')).toBe(false)
   await ui.unmount()
 })

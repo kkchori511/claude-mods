@@ -61,7 +61,7 @@ const effortStep = (level: string | null): string => {
   return index < 0 ? '' : ` (${index + 1}/${EFFORT_LEVELS.length})`
 }
 
-const WIDTH = 15
+const WIDTH = 10
 const INNER = WIDTH + 2
 const TITLE = 'Usage'
 const TITLE_INNER = 10
@@ -135,7 +135,7 @@ const toSnapshot = (u: Reading): Snapshot => ({
   })),
 })
 
-// Time until reset: 3d 4h / 2h 13m / 45m.
+// Time until reset: 3d 4h / 2h 13m / 45m (no "Resets" prefix).
 const remaining = (resetsAt: string | null, now: number): string => {
   if (resetsAt === null) return ''
   const minutes = Math.max(0, Math.round((Date.parse(resetsAt) - now) / 60000))
@@ -143,9 +143,9 @@ const remaining = (resetsAt: string | null, now: number): string => {
   const hours = Math.floor((minutes % 1440) / 60)
   const mins = minutes % 60
 
-  if (days > 0) return `Resets ${days}d ${hours}h`
-  if (hours > 0) return `Resets ${hours}h ${mins}m`
-  return `Resets ${mins}m`
+  if (days > 0) return `${days}d ${hours}h`
+  if (hours > 0) return `${hours}h ${mins}m`
+  return `${mins}m`
 }
 
 // 토큰 수 축약: 84000 -> 84k, 1000000 -> 1M.
